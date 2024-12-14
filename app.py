@@ -8,8 +8,9 @@ st.title("Patient Sugar Data Management")
 st.subheader("Daily Sugar Tracking System")
 
 # WhatsApp API Details
-WHATSAPP_API_URL = "https://graph.facebook.com/v16.0/<YOUR_PHONE_ID>/messages"
-ACCESS_TOKEN = "<YOUR_ACCESS_TOKEN>"
+WHATSAPP_API_URL = "https://graph.facebook.com/v16.0/<441279502411807>/messages"
+ACCESS_TOKEN =  "EACCxpiZAJrfcBOZC9qWgC9rNr1eruK7WJmUBOUYY3FTyzLyvlBOh8ZCg46x0akMqUHl5AfNhpmR2TpAL4moFuU1vh3iZBJPTnSAHfXAvryB9KbRYX83uSLLTFA5AxZCGpopQvl0aFZBXgFWQZBiQyZAnnZAN2CNZBfO02YdcgiF2fmi9zfZALKAARDfXc7epAkC9rcaBpL8lTdjewZDZD"
+url = "https://graph.facebook.com/v21.0/441279502411807/messages"  # Replace with your Phone Number ID
 
 
 def send_whatsapp_message(patient_name, fbs, pp, rbs, phone_number):
