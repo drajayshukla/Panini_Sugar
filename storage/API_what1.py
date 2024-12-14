@@ -2,8 +2,7 @@ import requests
 
 # Define your API details
 url = "https://graph.facebook.com/v21.0/441279502411807/messages"  # Replace with your Phone Number ID
-access_token = "EACCxpiZAJrfcBOyYyh808XACCXnz9SyvZBMuNcXKYHaf4162S30ABm8NJPor3YMrEMinDuIFDZC64Df3ace1wDx6al8naHZCsbkzP3YpPGBu6sr5udQTMcXiVqTIhLxn4eRgGUJir4N9StzUe8tRpGa4oaU3loYwgHxJrraVc8wTIsJI9H6O5jrqbAk367ViAK6hqjPDDnZCZB0ewF0XGwKcUlXmCZA6W8FBAyfZBFaNOhUZD"  # Replace with your actual access token
-
+access_token = "EACCxpiZAJrfcBOZC9qWgC9rNr1eruK7WJmUBOUYY3FTyzLyvlBOh8ZCg46x0akMqUHl5AfNhpmR2TpAL4moFuU1vh3iZBJPTnSAHfXAvryB9KbRYX83uSLLTFA5AxZCGpopQvl0aFZBXgFWQZBiQyZAnnZAN2CNZBfO02YdcgiF2fmi9zfZALKAARDfXc7epAkC9rcaBpL8lTdjewZDZD"
 # Define the headers
 headers = {
     "Authorization": f"Bearer {access_token}",
