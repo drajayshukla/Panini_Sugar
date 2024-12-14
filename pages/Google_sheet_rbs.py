@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
-import hashlib
 
 # Google Sheets API Setup
 def connect_to_gsheet(json_keyfile, sheet_id):
@@ -17,13 +16,13 @@ def connect_to_gsheet(json_keyfile, sheet_id):
         return sheet
     except FileNotFoundError:
         st.error(f"JSON file not found: {json_keyfile}. Please ensure the file exists.")
-        return None
+        st.stop()
     except Exception as e:
         st.error(f"Error connecting to Google Sheets: {e}")
-        return None
+        st.stop()
 
-# Direct reference to Google Sheets JSON credentials and ID
-GSHEET_JSON = "Panini_Sugar/paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path to your JSON file
+# Provide the JSON path and Google Sheet ID
+GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path
 GSHEET_ID = "1EUwwDXQp8rCHQ0KYf3onVLGhTGTnaDGCMzJc4hnqG_w"  # Replace with your Google Sheet ID
 
 # Connect to Google Sheet
@@ -36,16 +35,13 @@ def load_data():
     try:
         if worksheet:
             data = worksheet.get_all_records()
-            df = pd.DataFrame(data)
-            if df.empty:
-                st.warning("Google Sheet is empty.")
-            return df
+            return pd.DataFrame(data)
         else:
             st.error("No worksheet available. Please check your Google Sheets connection.")
-            return pd.DataFrame()
+            st.stop()
     except Exception as e:
         st.error(f"Error loading data: {e}")
-        return pd.DataFrame()
+        st.stop()
 
 df = load_data()
 
@@ -55,16 +51,18 @@ else:
     st.error("Failed to connect to Google Sheets. Please check your credentials and permissions.")
     st.stop()
 
-# Debug loaded data
-st.write("Loaded DataFrame:")
-st.dataframe(df)
-
-# Normalize column names to lowercase
+# Normalize column names to lowercase for consistent processing
 df.columns = df.columns.str.strip().str.lower()
 
-# Check for required column
-if "mobile_number" not in df.columns:
-    st.error("The column 'mobile_number' is missing from the Google Sheet.")
+# Verify expected columns exist in the data
+expected_columns = [
+    "mobile_number", "date_time_stamp", "fbs", "post_bf", "pre_lunch",
+    "post_lunch", "pre_dinner", "post_dinner", "2_am", "remark",
+    "bolus_1", "bolus_2", "bolus_3", "basal", "advice"
+]
+missing_columns = [col for col in expected_columns if col not in df.columns]
+if missing_columns:
+    st.error(f"The following required columns are missing from the Google Sheet: {missing_columns}")
     st.stop()
 
 # Sidebar
@@ -98,11 +96,12 @@ doctor_password = st.sidebar.text_input("Enter Doctor Password:", type="password
 
 # Hash-based password authentication for security
 def verify_password(input_password, correct_hash):
+    import hashlib
     input_hash = hashlib.sha256(input_password.encode()).hexdigest()
     return input_hash == correct_hash
 
 # Store hashed password for doctor
-CORRECT_PASSWORD_HASH = hashlib.sha256("securepassword123".encode()).hexdigest()  # Replace with your secure password
+CORRECT_PASSWORD_HASH = "kris"  # Pre-compute a secure hash for your password
 
 if is_doctor:
     if verify_password(doctor_password, CORRECT_PASSWORD_HASH):
