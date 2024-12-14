@@ -23,7 +23,7 @@ def connect_to_gsheet(json_keyfile, sheet_id):
         return None
 
 # Direct reference to Google Sheets JSON credentials and ID
-GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path to your JSON file
+GSHEET_JSON = "Panini_Sugar/paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path to your JSON file
 GSHEET_ID = "1EUwwDXQp8rCHQ0KYf3onVLGhTGTnaDGCMzJc4hnqG_w"  # Replace with your Google Sheet ID
 
 # Connect to Google Sheet
