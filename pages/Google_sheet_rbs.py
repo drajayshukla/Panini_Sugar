@@ -21,7 +21,13 @@ def connect_to_gsheet(json_keyfile, sheet_name):
         return None
 
 # Load Google Sheets credentials from environment variable
-GSHEET_JSON = os.getenv("GOOGLE_CREDENTIALS_PATH") # Replace with your JSON path or set as env variable
+
+# Load Google Sheets credentials from environment variable
+GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"
+if not GSHEET_JSON:
+    st.error("The GOOGLE_CREDENTIALS_PATH environment variable is not set. Please configure it properly.")
+    st.stop()
+# Replace with your JSON path or set as env variable
 GSHEET_NAME = "sugarchart"  # Replace with your Google Sheet name
 
 # Connect to Google Sheet
