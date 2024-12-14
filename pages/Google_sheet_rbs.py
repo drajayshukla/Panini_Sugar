@@ -13,7 +13,7 @@ def connect_to_gsheet(json_keyfile, sheet_id):
         ]
         credentials = Credentials.from_service_account_file(json_keyfile, scopes=scopes)
         client = gspread.authorize(credentials)
-        sheet = client.open_by_key(sheet_id)  # Use the Google Sheet ID instead of the name
+        sheet = client.open_by_key(sheet_id)  # Use Google Sheet ID
         return sheet
     except FileNotFoundError:
         st.error(f"JSON file not found: {json_keyfile}. Please ensure the file exists.")
@@ -22,7 +22,7 @@ def connect_to_gsheet(json_keyfile, sheet_id):
         st.error(f"Error connecting to Google Sheets: {e}")
         return None
 
-# Direct reference to Google Sheets JSON credentials
+# Direct reference to Google Sheets JSON credentials and ID
 GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path to your JSON file
 GSHEET_ID = "1EUwwDXQp8rCHQ0KYf3onVLGhTGTnaDGCMzJc4hnqG_w"  # Replace with your Google Sheet ID
 
@@ -36,7 +36,10 @@ def load_data():
     try:
         if worksheet:
             data = worksheet.get_all_records()
-            return pd.DataFrame(data)
+            df = pd.DataFrame(data)
+            if df.empty:
+                st.warning("Google Sheet is empty.")
+            return df
         else:
             st.error("No worksheet available. Please check your Google Sheets connection.")
             return pd.DataFrame()
@@ -45,6 +48,24 @@ def load_data():
         return pd.DataFrame()
 
 df = load_data()
+
+if worksheet:
+    st.success("Connected to Google Sheets successfully!")
+else:
+    st.error("Failed to connect to Google Sheets. Please check your credentials and permissions.")
+    st.stop()
+
+# Debug loaded data
+st.write("Loaded DataFrame:")
+st.dataframe(df)
+
+# Normalize column names to lowercase
+df.columns = df.columns.str.strip().str.lower()
+
+# Check for required column
+if "mobile_number" not in df.columns:
+    st.error("The column 'mobile_number' is missing from the Google Sheet.")
+    st.stop()
 
 # Sidebar
 st.sidebar.title("Access Portal")
