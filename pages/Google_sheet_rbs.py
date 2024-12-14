@@ -2,11 +2,10 @@ import streamlit as st
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
-import os
 import hashlib
 
 # Google Sheets API Setup
-def connect_to_gsheet(json_keyfile, sheet_name):
+def connect_to_gsheet(json_keyfile, sheet_id):
     try:
         scopes = [
             "https://www.googleapis.com/auth/spreadsheets",
@@ -14,24 +13,21 @@ def connect_to_gsheet(json_keyfile, sheet_name):
         ]
         credentials = Credentials.from_service_account_file(json_keyfile, scopes=scopes)
         client = gspread.authorize(credentials)
-        sheet = client.open(sheet_name)
+        sheet = client.open_by_key(sheet_id)  # Use the Google Sheet ID instead of the name
         return sheet
+    except FileNotFoundError:
+        st.error(f"JSON file not found: {json_keyfile}. Please ensure the file exists.")
+        return None
     except Exception as e:
         st.error(f"Error connecting to Google Sheets: {e}")
         return None
 
-# Load Google Sheets credentials from environment variable
-
-# Load Google Sheets credentials from environment variable
-GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"
-if not GSHEET_JSON:
-    st.error("The GOOGLE_CREDENTIALS_PATH environment variable is not set. Please configure it properly.")
-    st.stop()
-# Replace with your JSON path or set as env variable
-GSHEET_NAME = "sugarchart"  # Replace with your Google Sheet name
+# Direct reference to Google Sheets JSON credentials
+GSHEET_JSON = "paniniwhat-6bf48ddc1d64.json"  # Replace with the correct path to your JSON file
+GSHEET_ID = "1EUwwDXQp8rCHQ0KYf3onVLGhTGTnaDGCMzJc4hnqG_w"  # Replace with your Google Sheet ID
 
 # Connect to Google Sheet
-sheet = connect_to_gsheet(GSHEET_JSON, GSHEET_NAME)
+sheet = connect_to_gsheet(GSHEET_JSON, GSHEET_ID)
 worksheet = sheet.get_worksheet(0) if sheet else None
 
 # Load data from Google Sheet
@@ -55,24 +51,24 @@ st.sidebar.title("Access Portal")
 
 # Patient View
 st.sidebar.subheader("Patient Access")
-patient_id = st.sidebar.text_input("Enter your Patient ID:")
+mobile_number = st.sidebar.text_input("Enter your Mobile Number:")
 
-if patient_id:
-    if patient_id.isdigit():
-        patient_data = df[df["Patient ID"].astype(str) == patient_id]
+if mobile_number:
+    if mobile_number.isdigit():
+        patient_data = df[df["mobile_number"].astype(str) == mobile_number]
         if not patient_data.empty:
-            st.write(f"### Your Data (Patient ID: {patient_id})")
+            st.write(f"### Your Data (Mobile Number: {mobile_number})")
             st.dataframe(patient_data)
             st.download_button(
                 label="Download Your Data",
                 data=patient_data.to_csv(index=False),
-                file_name=f"patient_{patient_id}_data.csv",
+                file_name=f"patient_{mobile_number}_data.csv",
                 mime="text/csv"
             )
         else:
-            st.info(f"No data found for Patient ID: {patient_id}.")
+            st.info(f"No data found for Mobile Number: {mobile_number}.")
     else:
-        st.warning("Invalid Patient ID. Please enter a numeric ID.")
+        st.warning("Invalid Mobile Number. Please enter a numeric value.")
 
 # Doctor View
 st.sidebar.subheader("Doctor Access")
